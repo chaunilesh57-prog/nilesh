@@ -1,0 +1,156 @@
+
+
+
+1.	XML Document (employee.xml)
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?xml-stylesheet type="text/xsl" href="employee.xsl"?>
+
+
+<!DOCTYPE employees SYSTEM "employee.dtd">
+
+
+<employees>
+<employee>
+<emp_id>101</emp_id>
+<name>Komal Bhosale</name>
+<department>Civil Engineering</department>
+<designation>Assistant Professor</designation>
+<salary>50000</salary>
+</employee>
+
+
+<employee>
+<emp_id>102</emp_id>
+<name>Rahul Patil</name>
+<department>IT</department>
+<designation>Software Engineer</designation>
+<salary>60000</salary>
+</employee>
+</employees>
+ 
+2.	DTD (employee.dtd)
+<!ELEMENT employees (employee+)>
+
+
+<!ELEMENT employee (emp_id, name, department, designation, salary)>
+
+
+<!ELEMENT emp_id (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT department (#PCDATA)>
+<!ELEMENT designation (#PCDATA)>
+<!ELEMENT salary (#PCDATA)>
+👉 Explanation:
+•	employee+ → One or more employee entries
+•	#PCDATA → Parsed character data (text content)
+
+
+3.	XML Schema (employee.xsd)
+<?xml version="1.0"?>
+
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+
+<xsd:element name="employees">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="employee" maxOccurs="unbounded">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="emp_id" type="xsd:int"/>
+<xsd:element name="name" type="xsd:string"/>
+<xsd:element name="department" type="xsd:string"/>
+<xsd:element name="designation" type="xsd:string"/>
+<xsd:element name="salary" type="xsd:decimal"/>
+ 
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+
+
+</xsd:schema>
+👉 Advantage of XSD over DTD:
+•	Supports data types (int, decimal, string)
+•	More powerful validation
+
+
+4.	Display XML using XSLT (Tabular Format) employee.xsl
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+
+<xsl:template match="/">
+
+
+<html>
+<head>
+<style>
+table {
+border-collapse: collapse; width: 80%;
+}
+th, td {
+border: 1px solid black; padding: 8px;
+text-align: center;
+ 
+}
+th {
+background-color: lightblue;
+}
+</style>
+</head>
+
+
+<body>
+<h2>Employee Details</h2>
+<table>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Designation</th>
+<th>Salary</th>
+</tr>
+
+
+<xsl:for-each select="employees/employee">
+<tr>
+<td><xsl:value-of select="emp_id"/></td>
+<td><xsl:value-of select="name"/></td>
+<td><xsl:value-of select="department"/></td>
+<td><xsl:value-of select="designation"/></td>
+<td><xsl:value-of select="salary"/></td>
+</tr>
+</xsl:for-each>
+
+
+</table>
+</body>
+</html>
+ 
+</xsl:template>
+</xsl:stylesheet>
+
+
+5.	Alternative: Simple CSS Display (optional) employee.css
+employee { display: block;
+border: 1px solid black; margin: 10px;
+padding: 10px;
+}
+
+
+emp_id, name, department, designation, salary { display: block;
+}
+Add this line in XML:
+<?xml-stylesheet type="text/css" href="employee.css"?>
+
+
+Output:
+
