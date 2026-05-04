@@ -1,0 +1,175 @@
+Implement Greedy search algorithm for any of the following application
+
+import heapq
+
+# -------------------------------
+# 1. Selection Sort
+# -------------------------------
+def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+
+# -------------------------------
+# 2. Dijkstra
+# -------------------------------
+def dijkstra(graph, start):
+    dist = {node: float('inf') for node in graph}
+    dist[start] = 0
+    pq = [(0, start)]
+
+    while pq:
+        current_dist, u = heapq.heappop(pq)
+        for v, weight in graph[u]:
+            if dist[v] > current_dist + weight:
+                dist[v] = current_dist + weight
+                heapq.heappush(pq, (dist[v], v))
+    return dist
+
+
+# -------------------------------
+# 3. Prim’s MST (User Input)
+# -------------------------------
+def prim():
+    import heapq
+
+    n = int(input("Enter number of vertices: "))
+    vertices = input("Enter vertex names: ").split()
+
+    graph = {v: [] for v in vertices}
+
+    e = int(input("Enter number of edges: "))
+    print("Enter edges (u v weight):")
+    for _ in range(e):
+        u, v, w = input().split()
+        w = int(w)
+        graph[u].append((v, w))
+        graph[v].append((u, w))  # undirected
+
+    start = input("Enter starting vertex: ")
+
+    visited = set()
+    min_heap = [(0, start, None)]  # (weight, node, parent)
+    total_cost = 0
+
+    print("\nEdges selected in MST:")
+
+    while min_heap:
+        weight, u, parent = heapq.heappop(min_heap)
+
+        if u not in visited:
+            visited.add(u)
+            total_cost += weight
+
+            if parent is not None:
+                print(f"{parent} -- {u}  (weight = {weight})")
+
+            for v, w in graph[u]:
+                if v not in visited:
+                    heapq.heappush(min_heap, (w, v, u))
+
+    print("\nTotal MST Cost Calculation:")
+    print("Sum of selected edge weights =", total_cost)
+
+# -------------------------------
+# 4. Kruskal’s MST (User Input)
+# -------------------------------
+def find(parent, i):
+    if parent[i] != i:
+        parent[i] = find(parent, parent[i])
+    return parent[i]
+
+def union(parent, rank, x, y):
+    root_x = find(parent, x)
+    root_y = find(parent, y)
+
+    if rank[root_x] < rank[root_y]:
+        parent[root_x] = root_y
+    elif rank[root_x] > rank[root_y]:
+        parent[root_y] = root_x
+    else:
+        parent[root_y] = root_x
+        rank[root_x] += 1
+
+
+def kruskal():
+    n = int(input("Enter number of vertices: "))
+    vertices = input("Enter vertex names: ").split()
+
+    e = int(input("Enter number of edges: "))
+    edges = []
+
+    print("Enter edges (u v weight):")
+    for _ in range(e):
+        u, v, w = input().split()
+        edges.append((u, v, int(w)))
+
+    edges.sort(key=lambda x: x[2])
+
+    parent = {v: v for v in vertices}
+    rank = {v: 0 for v in vertices}
+
+    mst = []
+    total_cost = 0
+
+    for u, v, w in edges:
+        if find(parent, u) != find(parent, v):
+            union(parent, rank, u, v)
+            mst.append((u, v, w))
+            total_cost += w
+
+    print("MST:", mst)
+    print("Total Cost:", total_cost)
+
+
+# -------------------------------
+# MENU
+# -------------------------------
+def main():
+    while True:
+        print("\n===== GREEDY ALGORITHMS MENU =====")
+        print("1. Selection Sort")
+        print("2. Dijkstra Shortest Path")
+        print("3. Prim's MST (User Input)")
+        print("4. Kruskal's MST (User Input)")
+        print("5. Exit")
+
+        choice = int(input("Enter your choice: "))
+
+        if choice == 1:
+            arr = list(map(int, input("Enter numbers: ").split()))
+            print("Sorted:", selection_sort(arr))
+
+        elif choice == 2:
+            graph = {
+                'A': [('B', 4), ('C', 1)],
+                'B': [('E', 4)],
+                'C': [('B', 2), ('D', 4)],
+                'D': [('E', 4)],
+                'E': []
+            }
+            start = input("Enter start node (A-E): ")
+            print("Shortest Paths:", dijkstra(graph, start))
+
+        elif choice == 3:
+            prim()
+
+        elif choice == 4:
+            kruskal()
+
+        elif choice == 5:
+            print("Exiting program...")
+            break
+
+        else:
+            print("Invalid choice!")
+
+
+if __name__ == "__main__":
+    main()
