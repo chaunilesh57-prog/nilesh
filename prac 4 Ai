@@ -1,0 +1,219 @@
+Aim:- Implement a solution for a constraint satisfaction problem using branch and bound and backtracking for n-queen problem or a graph colouring problem
+
+# -------------------------------
+# GRAPH INPUT
+# -------------------------------
+def input_graph():
+    n = int(input("Enter number of vertices: "))
+    print("Enter adjacency matrix:")
+    graph = []
+    for i in range(n):
+        graph.append(list(map(int, input().split())))
+    return graph, n
+
+
+# -------------------------------
+# GRAPH COLORING
+# -------------------------------
+def is_safe_graph(v, graph, color, c, n):
+    for i in range(n):
+        if graph[v][i] == 1 and color[i] == c:
+            return False
+    return True
+
+
+def graph_coloring_bt(graph, m, color, v, n):
+    if v == n:
+        print("\n✅ Solution Found:", color)
+        return True
+
+    for c in range(1, m + 1):
+        print(f"\nTrying Color {c} for Vertex {v}")
+
+        if is_safe_graph(v, graph, color, c, n):
+            print(f"✔ Assign Color {c} to Vertex {v}")
+            color[v] = c
+            print("State:", color)
+
+            if graph_coloring_bt(graph, m, color, v + 1, n):
+                return True
+
+            print(f"❌ Backtracking from Vertex {v}")
+            color[v] = 0
+
+        else:
+            print("✖ Conflict")
+
+    return False
+
+
+def graph_coloring_bb(graph, m, n):
+    color = [0] * n
+
+    def solve(v):
+        if v == n:
+            print("\n✅ Solution Found:", color)
+            return True
+
+        for c in range(1, m + 1):
+            print(f"[B&B] Trying Color {c} for Vertex {v}")
+
+            if is_safe_graph(v, graph, color, c, n):
+                color[v] = c
+                print("[B&B] State:", color)
+
+                if solve(v + 1):
+                    return True
+
+                print(f"[B&B] Backtracking from {v}")
+                color[v] = 0
+
+        return False
+
+    if not solve(0):
+        print("No solution exists")
+
+
+# -------------------------------
+# N-QUEENS BACKTRACKING
+# -------------------------------
+def is_safe_queen(board, row, col, n):
+    # column
+    for i in range(row):
+        if board[i][col] == 1:
+            return False
+
+    # diagonal left
+    i, j = row-1, col-1
+    while i >= 0 and j >= 0:
+        if board[i][j] == 1:
+            return False
+        i -= 1
+        j -= 1
+
+    # diagonal right
+    i, j = row-1, col+1
+    while i >= 0 and j < n:
+        if board[i][j] == 1:
+            return False
+        i -= 1
+        j += 1
+
+    return True
+
+
+def solve_nq_bt(board, row, n):
+    if row == n:
+        print("\n✅ Solution Found:")
+        print_board(board)
+        return True
+
+    for col in range(n):
+        print(f"\nTrying Row {row}, Col {col}")
+
+        if is_safe_queen(board, row, col, n):
+            board[row][col] = 1
+            print(f"✔ Placed at ({row},{col})")
+            print_board(board)
+
+            if solve_nq_bt(board, row+1, n):
+                return True
+
+            print(f"❌ Backtracking from ({row},{col})")
+            board[row][col] = 0
+
+        else:
+            print("✖ Not Safe")
+
+    return False
+
+
+# -------------------------------
+# N-QUEENS BRANCH & BOUND
+# -------------------------------
+def solve_nq_bb(n):
+    board = [[0]*n for _ in range(n)]
+    col = [False]*n
+    diag1 = [False]*(2*n-1)
+    diag2 = [False]*(2*n-1)
+
+    def solve(row):
+        if row == n:
+            print("\n✅ Solution Found:")
+            print_board(board)
+            return True
+
+        for c in range(n):
+            print(f"[B&B] Trying ({row},{c})")
+
+            if not col[c] and not diag1[row-c+n-1] and not diag2[row+c]:
+                board[row][c] = 1
+                col[c] = diag1[row-c+n-1] = diag2[row+c] = True
+
+                print("[B&B] Board:")
+                print_board(board)
+
+                if solve(row+1):
+                    return True
+
+                print(f"[B&B] Backtracking ({row},{c})")
+                board[row][c] = 0
+                col[c] = diag1[row-c+n-1] = diag2[row+c] = False
+
+        return False
+
+    if not solve(0):
+        print("No solution exists")
+
+
+# -------------------------------
+# PRINT BOARD
+# -------------------------------
+def print_board(board):
+    for row in board:
+        print(" ".join("Q" if x else "." for x in row))
+    print()
+
+
+# -------------------------------
+# MAIN MENU
+# -------------------------------
+def main():
+    while True:
+        print("\n====== CSP MENU ======")
+        print("1. Graph Coloring (Backtracking)")
+        print("2. Graph Coloring (Branch & Bound)")
+        print("3. N-Queens (Backtracking)")
+        print("4. N-Queens (Branch & Bound)")
+        print("5. Exit")
+
+        choice = int(input("Enter choice: "))
+
+        if choice == 5:
+            break
+
+        elif choice in [1, 2]:
+            graph, n = input_graph()
+            m = int(input("Enter number of colors: "))
+
+            if choice == 1:
+                color = [0]*n
+                graph_coloring_bt(graph, m, color, 0, n)
+            else:
+                graph_coloring_bb(graph, m, n)
+
+        elif choice in [3, 4]:
+            n = int(input("Enter number of queens: "))
+
+            if choice == 3:
+                board = [[0]*n for _ in range(n)]
+                solve_nq_bt(board, 0, n)
+            else:
+                solve_nq_bb(n)
+
+
+# -------------------------------
+# RUN
+# -------------------------------
+if __name__ == "__main__":
+    main()
