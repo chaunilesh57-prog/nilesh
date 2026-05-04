@@ -1,0 +1,62 @@
+Aim:- Implement depth first search algorithm and Breadth First Search algorithm, Use an undirected graph and develop a recursive algorithm for searching all the vertices of a graph or tree data structure
+
+
+from collections import deque
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = {i: [] for i in range(vertices)}
+
+    # Add edge (undirected)
+    def add_edge(self, u, v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+
+    # -------- DFS (Recursive) --------
+    def dfs_recursive(self, node, visited):
+        visited[node] = True
+        print(node, end=" ")
+
+        for neighbor in self.graph[node]:
+            if not visited[neighbor]:
+                self.dfs_recursive(neighbor, visited)
+
+    # -------- BFS --------
+    def bfs(self, start):
+        visited = [False] * self.V
+        queue = deque()
+
+        visited[start] = True
+        queue.append(start)
+
+        while queue:
+            node = queue.popleft()
+            print(node, end=" ")
+
+            for neighbor in self.graph[node]:
+                if not visited[neighbor]:
+                    visited[neighbor] = True
+                    queue.append(neighbor)
+
+
+# -------- Main Program --------
+# Input number of vertices and edges
+v = int(input("Enter number of vertices: "))
+e = int(input("Enter number of edges: "))
+
+g = Graph(v)
+
+print("Enter edges (u v):")
+for _ in range(e):
+    u, v = map(int, input().split())
+    g.add_edge(u, v)
+
+start = int(input("Enter starting vertex: "))
+
+print("\n DFS Traversal (Recursive):")
+visited = [False] * g.V
+g.dfs_recursive(start, visited)
+
+print("\n BFS Traversal:")
+g.bfs(start)
