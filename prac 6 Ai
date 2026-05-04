@@ -1,0 +1,143 @@
+Implement any one of the following Expert System 
+
+class HelpDeskExpertSystem:
+    def __init__(self):
+        self.knowledge_base = {
+            "Internet Issue": {
+                "symptoms": [
+                    "no internet",
+                    "wifi not working",
+                    "slow internet",
+                    "connection drops"
+                ],
+                "questions": [
+                    "Is the router powered on? (yes/no): ",
+                    "Are cables properly connected? (yes/no): ",
+                    "Are other devices able to connect? (yes/no): "
+                ],
+                "solutions": [
+                    "Restart the router.",
+                    "Check all cable connections.",
+                    "Contact your Internet Service Provider."
+                ]
+            },
+            "Computer Startup Issue": {
+                "symptoms": [
+                    "not starting",
+                    "black screen",
+                    "no power",
+                    "won't boot"
+                ],
+                "questions": [
+                    "Is the power cable connected? (yes/no): ",
+                    "Do you see any lights on the CPU? (yes/no): ",
+                    "Do you hear any beeping sounds? (yes/no): "
+                ],
+                "solutions": [
+                    "Check power supply.",
+                    "Try restarting the system.",
+                    "Boot into safe mode.",
+                    "Consult technician if problem persists."
+                ]
+            },
+            "Slow System": {
+                "symptoms": [
+                    "slow",
+                    "lagging",
+                    "freezing",
+                    "takes long time"
+                ],
+                "questions": [
+                    "Are many programs running? (yes/no): ",
+                    "Have you scanned for viruses? (yes/no): ",
+                    "Is disk space low? (yes/no): "
+                ],
+                "solutions": [
+                    "Close unnecessary programs.",
+                    "Run antivirus scan.",
+                    "Free up disk space.",
+                    "Upgrade RAM if needed."
+                ]
+            },
+            "Printer Issue": {
+                "symptoms": [
+                    "printer not working",
+                    "not printing",
+                    "paper jam",
+                    "printer offline"
+                ],
+                "questions": [
+                    "Is the printer connected? (yes/no): ",
+                    "Is there paper in the tray? (yes/no): ",
+                    "Are drivers installed? (yes/no): "
+                ],
+                "solutions": [
+                    "Reconnect the printer.",
+                    "Clear paper jams.",
+                    "Install or update drivers.",
+                    "Restart printer."
+                ]
+            }
+        }
+
+    def identify_problem(self, user_input):
+        scores = {}
+
+        for problem, data in self.knowledge_base.items():
+            score = 0
+            for symptom in data["symptoms"]:
+                if symptom in user_input.lower():
+                    score += 1
+            scores[problem] = score
+
+        best_match = max(scores, key=scores.get)
+
+        if scores[best_match] == 0:
+            return None, 0
+
+        confidence = (scores[best_match] / len(self.knowledge_base[best_match]["symptoms"])) * 100
+        return best_match, confidence
+
+    def ask_questions(self, problem):
+        print(f"\nDiagnosing: {problem}")
+        positive_answers = 0
+
+        for question in self.knowledge_base[problem]["questions"]:
+            answer = input(question).lower()
+            if answer == "yes":
+                positive_answers += 1
+
+        return positive_answers
+
+    def give_solution(self, problem):
+        print("\nSuggested Solutions:")
+        for solution in self.knowledge_base[problem]["solutions"]:
+            print(f"- {solution}")
+
+    def run(self):
+        print("===== HELP DESK EXPERT SYSTEM =====")
+
+        while True:
+            user_input = input("\nDescribe your problem (or type 'exit'): ")
+
+            if user_input.lower() == "exit":
+                print("Exiting system...")
+                break
+
+            problem, confidence = self.identify_problem(user_input)
+
+            if problem is None:
+                print("Sorry, problem not recognized.")
+                continue
+
+            print(f"\nIdentified Problem: {problem}")
+            print(f"Confidence Level: {confidence:.2f}%")
+
+            self.ask_questions(problem)
+            self.give_solution(problem)
+
+
+# Run the system
+if __name__ == "__main__":
+    system = HelpDeskExpertSystem()
+    system.run()
