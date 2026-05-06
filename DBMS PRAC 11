@@ -1,0 +1,40 @@
+ASSIGNMENT NO: 11
+
+•	Program (Python Code):
+
+# mapreduce_example.py
+
+from functools import reduce
+
+# Step 1: Input data
+text = "big data requires map reduce map reduce is powerful"
+
+# Step 2: Map Phase - split and assign count 1 to each word
+mapped = [(word, 1) for word in text.split()]
+print("🗺️ Mapped Data:")
+print(mapped)
+
+# Step 3: Shuffle Phase - group by words
+shuffle = {}
+for word, count in mapped:
+    shuffle.setdefault(word, []).append(count)
+
+print("\n🔄 Shuffled Data:")
+print(shuffle)
+
+# Step 4: Reduce Phase - sum up counts for each word
+reduced = {word: reduce(lambda a, b: a + b, counts) for word, counts in shuffle.items()}
+
+print("\n🧮 Reduced Data (Final Word Count):")
+print(reduced)
+
+•	Output in CMD:
+C:\Users\Tushar> python mapreduce_example.py
+🗺️ Mapped Data:
+[('big', 1), ('data', 1), ('requires', 1), ('map', 1), ('reduce', 1), ('map', 1), ('reduce', 1), ('is', 1), ('powerful', 1)]
+
+🔄 Shuffled Data:
+{'big': [1], 'data': [1], 'requires': [1], 'map': [1, 1], 'reduce': [1, 1], 'is': [1], 'powerful': [1]}
+
+🧮 Reduced Data (Final Word Count):
+{'big': 1, 'data': 1, 'requires': 1, 'map': 2, 'reduce': 2, 'is': 1, 'powerful': 1}
