@@ -1,0 +1,32 @@
+Step 3: Check Audit Table Structure
+DESC library_audit;
+If action_type column is missing, you will get problem.
+________________________________________
+Step 4: Add Missing Columns
+ALTER TABLE library_audit
+ADD action_type VARCHAR(10);
+Output:
+Query OK, 0 rows affected
+________________________________________
+Step 5: Verify Table Again
+DESC library_audit;
+Now output should contain:
+action_type | varchar(10)
+________________________________________
+Step 6: Run UPDATE Query
+UPDATE library
+SET author = 'Silberschatz'
+WHERE book_id = 1;
+Output:
+Query OK, 1 row affected
+________________________________________
+Step 7: Run DELETE Query
+DELETE FROM library
+WHERE book_id = 2;
+Output:
+Query OK, 1 row affected
+________________________________________
+Step 8: Check Audit Table
+SELECT * FROM library_audit;
+Output:
+
